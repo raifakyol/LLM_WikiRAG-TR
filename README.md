@@ -53,6 +53,7 @@ Modellerin Karşılaştırılması TOP-1 vs TOP-5 Accuracy HEATMAP
 <br/>
 <img src="https://github.com/raifakyol/LLM_WikiRAG-TR/blob/main/result/accuracy_heatmap.png" width="auto">
 <br/>
+
                                  Method  Top-1 Accuracy  Top-5 Accuracy
                                    BM25           0.551           0.785
                                    Word           0.254           0.440
@@ -62,3 +63,11 @@ Modellerin Karşılaştırılması TOP-1 vs TOP-5 Accuracy HEATMAP
                               gte-large           0.535           0.776
                                  bge-m3           0.696           0.915
                    Weighted Combination           0.144           0.198
+
+
+Sonuçlar:
+Deneyler, farklı bilgi alma yöntemlerinin performanslarını karşılaştırmak için etkili bir temel oluşturmuştur:
+BM25, hızlı ve etkili bir temel yöntem olarak ön plana çıkmıştır.
+Dense modeller, özellikle intfloat/multilingual-e5-large-instruct ve BAAI/bge-m3, yüksek doğruluk sonuçlarıyla dikkat çekmiştir.
+Weighted Combination yönteminin ağırlıklarının iyileştirilmesi gerektiği açıkça görülmüştür.
+Bu sonuçlar, Türkçe dilinde bilgi alma görevleri için yöntemlerin avantaj ve dezavantajlarını değerlendirmek adına önemli bir katkı sağlamaktadır.

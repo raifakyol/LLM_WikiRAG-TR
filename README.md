@@ -1,4 +1,4 @@
-# WikiRAG-TR Veri Kümesinde LLM Modellerinin Performans Değerlendirmesi
+# Retrieval Yöntemlerinin Performans Karşılaştırması
 
 ![image](https://github.com/user-attachments/assets/87125c2e-c89f-41e4-94c3-4b296b8ee241)
 

@@ -66,8 +66,13 @@ Modellerin Karşılaştırılması TOP-1 vs TOP-5 Accuracy HEATMAP
 
 
 Sonuçlar:
-Deneyler, farklı bilgi alma yöntemlerinin performanslarını karşılaştırmak için etkili bir temel oluşturmuştur:
-BM25, hızlı ve etkili bir temel yöntem olarak ön plana çıkmıştır.
-Dense modeller, özellikle intfloat/multilingual-e5-large-instruct ve BAAI/bge-m3, yüksek doğruluk sonuçlarıyla dikkat çekmiştir.
-Weighted Combination yönteminin ağırlıklarının iyileştirilmesi gerektiği açıkça görülmüştür.
-Bu sonuçlar, Türkçe dilinde bilgi alma görevleri için yöntemlerin avantaj ve dezavantajlarını değerlendirmek adına önemli bir katkı sağlamaktadır.
+Deneyler, farklı bilgi alma yöntemlerinin performanslarını karşılaştırmak için etkili bir temel oluşturmuştur:<br/>
+BM25, hızlı ve etkili bir temel yöntem olarak ön plana çıkmıştır.<br/>
+Dense modeller, özellikle intfloat/multilingual-e5-large-instruct ve BAAI/bge-m3, yüksek doğruluk sonuçlarıyla dikkat çekmiştir.<br/>
+Weighted Combination yönteminin ağırlıklarının iyileştirilmesi gerektiği açıkça görülmüştür.<br/>
+Bu sonuçlar, Türkçe dilinde bilgi alma görevleri için yöntemlerin avantaj ve dezavantajlarını değerlendirmek adına önemli bir katkı sağlamaktadır.<br/>
+
+Kaynakça:
+[1]	WikiRAG-TR, https://huggingface.co/datasets/Metin/WikiRAG-TR, E.T. Ocak 2025.
+[2]	S. Robertson, H. Zaragoza, The Probabilistic Relevance Framework: BM25 and Beyond, 2009, pp 333-389.
+

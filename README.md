@@ -1,5 +1,6 @@
 # WikiRAG-TR Veri Kümesinde LLM Modellerinin Performans Değerlendirmesi
 
+![image](https://github.com/user-attachments/assets/87125c2e-c89f-41e4-94c3-4b296b8ee241)
 
                                  Method  Top-1 Accuracy  Top-5 Accuracy
                                    BM25           0.551           0.785

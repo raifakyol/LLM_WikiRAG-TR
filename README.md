@@ -19,6 +19,40 @@ correct_intro_idx: Index of the related introduction in the context. Can be used
 
 # Performance Result:
 
+Soruların Kelime Uzunluk Dağılımı:
+<br/>
+<img src="https://github.com/raifakyol/LLM_WikiRAG-TR/blob/main/result/soru_uzunluk.png" width="auto">
+<br/>
+
+Model Bazlı Chunk İşlem Süresi:
+<br/>
+<img src="https://github.com/raifakyol/LLM_WikiRAG-TR/blob/main/result/chunk_islem_suresi.png" width="auto">
+<br/>
+
+Chunk Uzunluklarının Dağılımı:
+<br/>
+<img src="https://github.com/raifakyol/LLM_WikiRAG-TR/blob/main/result/chunk_uzunluk_dagilimi.png" width="auto">
+<br/>
+
+Modellerin Karşılaştırılması TOP-1 Accuracy
+<br/>
+<img src="https://github.com/raifakyol/LLM_WikiRAG-TR/blob/main/result/top1_accuracy.png" width="auto">
+<br/>
+
+Modellerin Karşılaştırılması TOP-5 Accuracy
+<br/>
+<img src="https://github.com/raifakyol/LLM_WikiRAG-TR/blob/main/result/top5_accuracy.png" width="auto">
+<br/>
+
+Modellerin Karşılaştırılması TOP-1 vs TOP-5 Accuracy
+<br/>
+<img src="https://github.com/raifakyol/LLM_WikiRAG-TR/blob/main/result/top1vstop5_accuracu.png" width="auto">
+<br/>
+
+Modellerin Karşılaştırılması TOP-1 vs TOP-5 Accuracy HEATMAP
+<br/>
+<img src="https://github.com/raifakyol/LLM_WikiRAG-TR/blob/main/result/accuracy_heatmap.png" width="auto">
+<br/>
                                  Method  Top-1 Accuracy  Top-5 Accuracy
                                    BM25           0.551           0.785
                                    Word           0.254           0.440

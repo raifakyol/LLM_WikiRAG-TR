@@ -1,1 +1,1 @@
-# WIkIRAG-TR Veri Kümesinde LLM Modellerinin Performans Değerlendirmesi
+# WikiRAG-TR Veri Kümesinde LLM Modellerinin Performans Değerlendirmesi

@@ -1,5 +1,5 @@
 # Retrieval Yöntemlerinin Performans Karşılaştırması
-<h6>Raif AKYOL, 23501086,</h6><a href="https://rakyol.dev/"> rakyol.dev</a>
+<h6>Raif AKYOL, 23501086,<a href="https://rakyol.dev/"> rakyol.dev</a></h6>
 
 ![image](https://github.com/user-attachments/assets/87125c2e-c89f-41e4-94c3-4b296b8ee241)
 

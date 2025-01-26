@@ -1,4 +1,3 @@
-![image](https://github.com/user-attachments/assets/d289beec-6438-4577-aae5-212442d19467)# Retrieval Yöntemlerinin Performans Karşılaştırması
 <h6>Raif AKYOL, 23501086,<a href="https://rakyol.dev/"> rakyol.dev</a></h6>
 
 ![image](https://github.com/user-attachments/assets/87125c2e-c89f-41e4-94c3-4b296b8ee241)

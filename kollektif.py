@@ -14,6 +14,7 @@ from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModel
 from rank_bm25 import BM25Okapi
 from nltk.tokenize import word_tokenize
+from collections import Counter
 
 # Hugging Face'den WikiRAG-TR veri kümesini yükleme
 dataset = load_dataset("Metin/WikiRAG-TR")
@@ -80,10 +81,19 @@ for example in sampled_data:
             "chunk_list_length": len(chunk_list)
         })
 
-# BM25 için tokenize edilmiş corpus
-# BM25 modelinde kullanılmak üzere corpus'u token haline getir.
+#word matcing için.
 tokenized_corpus = [word_tokenize(chunk) for chunk in sampled_chunks]
-bm25 = BM25Okapi(tokenized_corpus)
+
+
+# BERT tokenizer ile BM25 için tokenize edilmiş corpus hazırlama
+# BM25 modeli için BERT tokenizasyonunu kullanılır.
+bert_tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")  
+
+# BERT tokenizer ile tokenized corpus oluşturma
+bert_tokenized_corpus = [
+    bert_tokenizer.tokenize(chunk) for chunk in sampled_chunks
+]
+bm25_bert = BM25Okapi(bert_tokenized_corpus)
 
 # Word Matching için Jaccard Similarity fonksiyonu
 # Jaccard benzerliği hesaplayan bir fonksiyon.
@@ -115,6 +125,7 @@ tokenizers = []
 vector_dims = []
 indexes = []
 
+
 # Modelleri yükleme ve FAISS için indeks oluşturma
 # Modellerin yüklenmesi ve FAISS indeks yapısının kurulması.
 for model_name in model_names:
@@ -141,8 +152,12 @@ def encode_chunks_with_model(chunks, model, tokenizer):
         outputs = model(**inputs)
     return outputs.last_hidden_state.mean(dim=1).numpy()
 
+
+# Türkçe özel dönüşüm fonksiyonu
+def preprocess_text_turkish(text):
+    return text.replace("I", "ı").lower()
+
 # Chunk işleme fonksiyonu
-# Chunk'ları FAISS'e eklemek için vektörize eder.
 def process_model_chunks(model, tokenizer, index, model_name):
     print(f"Processing model: {model_name} started.")
     batch_size = 64
@@ -150,15 +165,27 @@ def process_model_chunks(model, tokenizer, index, model_name):
         end = start + batch_size
         chunk_batch = sampled_chunks[start:end]
         vectors = encode_chunks_with_model(chunk_batch, model, tokenizer)
-        print(f"Vector Shape: {vectors.shape}")  # Debug: Vektör boyutunu yazdır
+        index.add(vectors.astype("float32"))
+    print(f"Model {model_name} processing completed. Total vectors in FAISS: {index.ntotal}")
+
+# Turkish-ColBERT modeli için özel chunk işleme fonksiyonu
+def process_model_chunks_turkish_colbert(model, tokenizer, index, model_name):
+    print(f"Processing model (Turkish-ColBERT): {model_name} started.")
+    batch_size = 64
+    for start in range(0, len(sampled_chunks), batch_size):
+        end = start + batch_size
+        chunk_batch = [preprocess_text_turkish(chunk) for chunk in sampled_chunks[start:end]]
+        vectors = encode_chunks_with_model(chunk_batch, model, tokenizer)
         index.add(vectors.astype("float32"))
     print(f"Model {model_name} processing completed. Total vectors in FAISS: {index.ntotal}")
 
 processing_times = []
-# Her model yalnızca bir kez işlenir
 for model, tokenizer, index, model_name in zip(models, tokenizers, indexes, model_names):
     start_time = time.time()
-    process_model_chunks(model, tokenizer, index, model_name)
+    if model_name == "ytu-ce-cosmos/turkish-colbert":
+        process_model_chunks_turkish_colbert(model, tokenizer, index, model_name)
+    else:
+        process_model_chunks(model, tokenizer, index, model_name)
     processing_time = time.time() - start_time
     processing_times.append(processing_time)
 
@@ -174,10 +201,12 @@ plt.show()
 
 # Retrieval yöntemleri
 # BM25 ile bilgi alma
+
+# BM25 bilgi alma fonksiyonu (BERT tokenizasyonu ile)
 def bm25_retrieval(query, top_k=5):
-    tokenized_query = word_tokenize(query)
-    scores = bm25.get_scores(tokenized_query)
-    return np.argsort(scores)[::-1][:top_k]
+    tokenized_query = bert_tokenizer.tokenize(query)  # Sorguyu BERT ile tokenize et
+    scores = bm25_bert.get_scores(tokenized_query)   # BM25 skorlarını al
+    return np.argsort(scores)[::-1][:top_k]          # En yüksek skora sahip ilk K sonucu döndür
 
 def dense_retrieval(query, model, tokenizer, index, top_k=5):
     query_vector = encode_chunks_with_model([query], model, tokenizer)
@@ -249,10 +278,10 @@ for model, tokenizer, index, model_name in zip(models, tokenizers, indexes, mode
     )
 
 # Ağırlıklı kombinasyon yöntemi için performans değerlendirme
-weights = [0.1, 0.1, 0.1, 0.3, 0.1, 0.2, 0.1]  # BM25, Word Matching, Dense1, Dense2, Dense3, Dense4, Dense5 ağırlıkları
+weights = [0.1, 0.05, 0.05, 0.3, 0.05, 0.15, 0.3]  # BM25, Word Matching, Dense1, Dense2, Dense3, Dense4, Dense5 ağırlıkları
 
 def combined_retrieval(query):
-    bm25_scores = bm25.get_scores(word_tokenize(query))
+    bm25_scores = bm25_bert.get_scores(bert_tokenizer(query))
     word_scores = [jaccard_similarity(word_tokenize(query), doc) for doc in tokenized_corpus]
     dense_scores_list = [
         dense_retrieval(query, model, tokenizer, index, top_k=len(sampled_chunks))[0]
@@ -264,6 +293,108 @@ results["Weighted Combination"] = evaluate_retrieval(
     [d["question"] for d in sampled_data], 
     sampled_true_indices, 
     combined_retrieval
+)
+
+def majority_voting_retrieval(query, bm25_results, word_results, dense_results_list, top_k=5):
+    combined_results = bm25_results + word_results
+    for dense_results in dense_results_list:
+        combined_results += list(dense_results)
+
+    # Top-K sonuçları döndür (en çok oyu alanlar)
+    result_counter = Counter(combined_results)
+    top_results = result_counter.most_common(top_k)
+    return [result[0] for result in top_results]
+
+# Rank Averaging
+
+def rank_averaging_retrieval(query, bm25_scores, word_scores, dense_scores_list, top_k=5):
+    # Sıralamaları normalize et
+    bm25_ranks = np.argsort(np.argsort(-bm25_scores)).astype(np.float64)  # Float olarak başlat
+    word_scores = np.array(word_scores)
+    word_ranks = np.argsort(np.argsort(-word_scores)).astype(np.float64)
+
+    # Dense sıralamaları genişlet
+    dense_ranks_list = []
+    for dense_scores in dense_scores_list:
+        dense_ranks_full = np.zeros_like(bm25_scores, dtype=np.float64)  # Float türünde sıfırlarla başla
+        top_k_indices = np.argsort(-dense_scores)[:top_k]  # İlk top_k sıralamayı al
+        for rank, idx in enumerate(top_k_indices):
+            dense_ranks_full[idx] = rank  # Top-k sıralamaları doldur
+        dense_ranks_list.append(dense_ranks_full)
+
+    # Ortalama sıralama hesapla
+    avg_ranks = bm25_ranks + word_ranks
+    for dense_ranks in dense_ranks_list:
+        avg_ranks += dense_ranks
+    avg_ranks = avg_ranks / (2 + len(dense_ranks_list))
+
+    # En yüksek sıralamaya sahip Top-K sonuçları döndür
+    return np.argsort(avg_ranks)[:top_k]
+
+
+
+
+# Geometric Mean
+
+def geometric_mean_retrieval(query, bm25_scores, word_scores, dense_scores_list, top_k=5):
+    # Skorları normalize et
+    bm25_scores = np.clip(bm25_scores, 1e-8, None)
+    word_scores = np.clip(word_scores, 1e-8, None)
+
+    # Dense skorlarını genişlet
+    expanded_dense_scores_list = []
+    for dense_scores in dense_scores_list:
+        expanded_dense_scores = np.ones_like(bm25_scores) * 1e-8  # Varsayılan olarak küçük bir değer
+        top_k_indices = np.argsort(-dense_scores)[:top_k]
+        for idx in top_k_indices:
+            expanded_dense_scores[idx] = dense_scores[idx]
+        expanded_dense_scores_list.append(expanded_dense_scores)
+
+    # Geometrik ortalama hesapla
+    combined_scores = bm25_scores * word_scores
+    for dense_scores in expanded_dense_scores_list:
+        combined_scores *= dense_scores
+
+    combined_scores **= 1 / (2 + len(expanded_dense_scores_list))  # Geometrik ortalama
+
+    # En yüksek skora sahip Top-K sonuçları döndür
+    return np.argsort(combined_scores)[::-1][:top_k]
+
+
+
+# Ensemble yöntemlerini değerlendirme
+results["Majority Voting"] = evaluate_retrieval(
+    [d["question"] for d in sampled_data],
+    sampled_true_indices,
+    lambda q: majority_voting_retrieval(
+        q,
+        bm25_retrieval(q),
+        word_matching_retrieval(q),
+        [dense_retrieval(q, model, tokenizer, index)[1] for model, tokenizer, index in zip(models, tokenizers, indexes)]
+    )
+)
+
+results["Rank Averaging"] = evaluate_retrieval(
+    [d["question"] for d in sampled_data],
+    sampled_true_indices,
+    lambda q: rank_averaging_retrieval(
+        q,
+        bm25_bert.get_scores(bert_tokenizer.tokenize(q)),
+        [jaccard_similarity(word_tokenize(q), doc) for doc in tokenized_corpus],
+        [dense_retrieval(q, model, tokenizer, index)[0] for model, tokenizer, index in zip(models, tokenizers, indexes)]
+    )
+)
+
+
+results["Geometric Mean"] = evaluate_retrieval(
+    [d["question"] for d in sampled_data],
+    sampled_true_indices,
+    lambda q: geometric_mean_retrieval(
+        q,
+        bm25_bert.get_scores(bert_tokenizer.tokenize(q)),
+        [jaccard_similarity(word_tokenize(q), doc) for doc in tokenized_corpus],
+        [dense_retrieval(q, model, tokenizer, index)[0] for model, tokenizer, index in zip(models, tokenizers, indexes)]
+    )
 )
 
 # Sonuçları DataFrame'e dönüştürme
@@ -315,14 +446,4 @@ sns.heatmap(
     cmap="YlGnBu"
 )
 plt.title("Accuracy Heatmap")
-plt.show()
-
-# Chunk uzunluk dağılım grafiği
-chunk_lengths = [len(chunk) for chunk in sampled_chunks]
-plt.figure(figsize=(10, 6))
-plt.hist(chunk_lengths, bins=20, color="skyblue", edgecolor="black")
-plt.title("Chunk Uzunluklarının Dağılımı")
-plt.xlabel("Chunk Length")
-plt.ylabel("Frequency")
-plt.grid(axis="y", linestyle="--", alpha=0.7)
 plt.show()

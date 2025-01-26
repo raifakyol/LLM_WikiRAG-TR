@@ -1,9 +1,13 @@
-                                 Method  Top-1 Accuracy  Top-5 Accuracy
-                                   BM25           0.551           0.785
-                                   Word           0.254           0.440
-sentence-transformers/all-MiniLM-L12-v2           0.203           0.321
-intfloat/multilingual-e5-large-instruct           0.690           0.912
-          ytu-ce-cosmos/turkish-colbert           0.153           0.300
-                     thenlper/gte-large           0.535           0.776
-                            BAAI/bge-m3           0.696           0.915
-                   Weighted Combination           0.144           0.198
+Retrieval Performance Results:
+                                     Method  Top-1 Accuracy  Top-5 Accuracy
+0                                      BM25            0.60            0.81
+1                                      Word            0.25            0.44
+2   sentence-transformers/all-MiniLM-L12-v2            0.20            0.32
+3   intfloat/multilingual-e5-large-instruct            0.69            0.91
+4             ytu-ce-cosmos/turkish-colbert            0.27            0.39
+5                       thenlpers/gte-large            0.54            0.78
+6                               BAAI/bge-m3            0.70            0.92
+7                      Weighted Combination            0.42            0.54
+8                           Majority Voting            0.61            0.87
+9                            Rank Averaging            0.45            0.71
+10                           Geometric Mean            0.48            0.73

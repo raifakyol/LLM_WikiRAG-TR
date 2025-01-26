@@ -1,4 +1,4 @@
-# Retrieval Yöntemlerinin Performans Karşılaştırması
+![image](https://github.com/user-attachments/assets/d289beec-6438-4577-aae5-212442d19467)# Retrieval Yöntemlerinin Performans Karşılaştırması
 <h6>Raif AKYOL, 23501086,<a href="https://rakyol.dev/"> rakyol.dev</a></h6>
 
 ![image](https://github.com/user-attachments/assets/87125c2e-c89f-41e4-94c3-4b296b8ee241)
@@ -55,23 +55,30 @@ WikiRAG-TR is a dataset of 5999 question and answer pairs which synthetically cr
 <img src="https://github.com/raifakyol/LLM_WikiRAG-TR/blob/main/result/accuracy_heatmap.png" width="auto">
 <br/>
 
-                                 Method  Top-1 Accuracy  Top-5 Accuracy
-                                   BM25           0.551           0.785
-                                   Word           0.254           0.440
-                      all-MiniLM-L12-v2           0.203           0.321
-         multilingual-e5-large-instruct           0.690           0.912
-                        turkish-colbert           0.153           0.300
-                              gte-large           0.535           0.776
-                                 bge-m3           0.696           0.915
-                   Weighted Combination           0.144           0.198
+                                     Method  Top-1 Accuracy  Top-5 Accuracy
+0                                      BM25            0.60            0.81
+1                                      Word            0.25            0.44
+2   sentence-transformers/all-MiniLM-L12-v2            0.20            0.32
+3   intfloat/multilingual-e5-large-instruct            0.69            0.91
+4             ytu-ce-cosmos/turkish-colbert            0.27            0.39
+5                       thenlpers/gte-large            0.54            0.78
+6                               BAAI/bge-m3            0.70            0.92
+7                      Weighted Combination            0.42            0.54
+8                           Majority Voting            0.61            0.87
+9                            Rank Averaging            0.45            0.71
+10                           Geometric Mean            0.48            0.73
 
 
 <h4>Sonuçlar:</h4><br/>
 Deneyler, farklı bilgi alma yöntemlerinin performanslarını karşılaştırmak için etkili bir temel oluşturmuştur:<br/>
-BM25, hızlı ve etkili bir temel yöntem olarak ön plana çıkmıştır.<br/>
-Dense modeller, özellikle intfloat/multilingual-e5-large-instruct ve BAAI/bge-m3, yüksek doğruluk sonuçlarıyla dikkat çekmiştir.<br/>
-Weighted Combination yönteminin ağırlıklarının iyileştirilmesi gerektiği açıkça görülmüştür.<br/>
-Bu sonuçlar, Türkçe dilinde bilgi alma görevleri için yöntemlerin avantaj ve dezavantajlarını değerlendirmek adına önemli bir katkı sağlamaktadır.<br/>
+BAAI/bge-m3, yüksek doğruluk oranlarıyla (Top-1 Accuracy: 0.70, Top-5 Accuracy: 0.92) deneylerin en başarılı yöntemi olarak ön plana çıkmıştır.<br/>
+intfloat/multilingual-e5-large-instruct, Top-1 Accuracy'de (0.69) BAAI/bge-m3'e çok yakın bir performans göstermiş ve güçlü bir alternatif olarak dikkat çekmiştir.<br/>
+Majority Voting, ensembllar arasında en etkili yöntem olarak öne çıkmış (Top-1 Accuracy: 0.61, Top-5 Accuracy: 0.87), bireysel yöntemleri başarılı bir şekilde birleştirebilmiştir.<br/>
+Weighted Combination yöntemi ise daha düşük doğruluk oranlarıyla (Top-1 Accuracy: 0.42, Top-5 Accuracy: 0.54), ağırlıklarının iyileştirilmesi gerektiğini açıkça ortaya koymuştur.<br/>
+Klasik yöntemlerden BM25, özellikle Top-1 Accuracy'de (0.60) modern dense yöntemlere kıyasla beklenenden daha iyi sonuçlar vermiştir ve hızlı bir temel çözüm olarak değerlendirilebilir.<br/>
+sentence-transformers/all-MiniLM-L12-v2 ve ytu-ce-cosmos/turkish-colbert, düşük performanslarıyla modern dense modellerin gerisinde kalmıştır.<br/>
+Bu sonuçlar, Türkçe dilinde bilgi alma görevleri için yöntemlerin avantaj ve dezavantajlarını değerlendirmek ve iyileştirme potansiyellerini belirlemek adına önemli bir katkı sağlamaktadır.<br/>
+
 
 <h4>Kaynakça:</h4><br/>
 [1]	WikiRAG-TR, https://huggingface.co/datasets/Metin/WikiRAG-TR, E.T. Ocak 2025.<br/>

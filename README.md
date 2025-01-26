@@ -54,18 +54,6 @@ WikiRAG-TR is a dataset of 5999 question and answer pairs which synthetically cr
 <img src="https://github.com/raifakyol/LLM_WikiRAG-TR/blob/main/result/accuracy_heatmap.png" width="auto">
 <br/>
 
-                                 Method  Top-1 Accuracy  Top-5 Accuracy
-                                   BM25            0.60            0.81
-                                   Word            0.25            0.44
-sentence-transformers/all-MiniLM-L12-v2            0.20            0.32
-intfloat/multilingual-e5-large-instruct            0.69            0.91
-          ytu-ce-cosmos/turkish-colbert            0.27            0.39
-                    thenlpers/gte-large            0.54            0.78
-                            BAAI/bge-m3            0.70            0.92
-                   Weighted Combination            0.42            0.54
-                        Majority Voting            0.61            0.87
-                         Rank Averaging            0.45            0.71
-                         Geometric Mean            0.48            0.73
 
 <h4>Sonuçlar:</h4><br/>
 Deneyler, farklı bilgi alma yöntemlerinin performanslarını karşılaştırmak için etkili bir temel oluşturmuştur:<br/>
